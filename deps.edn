@@ -1,4 +1,5 @@
-{:deps    {}
+{:paths ["libs/deps-template/resources"]
+ :deps    {}
 
  :aliases {:new {:extra-deps {com.github.seancorfield/clj-new {:mvn/version "1.2.381"}}
                  :exec-fn    clj-new/create
