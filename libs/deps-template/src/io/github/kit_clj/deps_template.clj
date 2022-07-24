@@ -29,7 +29,13 @@
   (let [full-name (:name data)
         [_ name] (string/split full-name #"/")
         versions (edn/read-string (slurp (str template-dir "/versions.edn")))
-        selmer-opts (merge data
+        data' (merge data {:full-name full-name
+                           :app name
+                           :ns-name (str (deps-new-impl/->ns full-name))
+                           :name name
+                           :sanitized (deps-new-impl/->file full-name)
+                           :default-cookie-secret (rand-str 16)})
+        selmer-opts (merge data'
                            {:versions versions}
                            (update-keys data #(edn/read-string (str % "?"))))
         selmer-map (->> selmer-paths
@@ -43,14 +49,7 @@
     (doseq [[_ {:keys [temp-file parsed]}] selmer-map]
       (fs/delete-on-exit temp-file)
       (spit (fs/file temp-file) parsed))
-    (-> data
-        (merge {:selmer-map selmer-map
-                :full-name full-name
-                :app name
-                :ns-name (deps-new-impl/->ns full-name)
-                :name name
-                :sanitized (deps-new-impl/->file full-name)
-                :default-cookie-secret (rand-str 16)}))))
+    (assoc data' :selmer-map selmer-map)))
 
 (defn template-fn [template {:keys [template-dir selmer-map]}]
   (let [extra-dir (str (fs/relativize template-dir (str (fs/temp-dir))))
