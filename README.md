@@ -30,7 +30,7 @@ brew install clojure babashka/brew/neil
 
 **Create a new Kit project in the "app" directory:**
 ```shell
-neil new io.github.rads/kit yourname/app
+neil new io.github.kit-clj/kit yourname/app
 ```
 
 ## Latest versions
